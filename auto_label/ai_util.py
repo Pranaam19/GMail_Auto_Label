@@ -24,19 +24,19 @@ def mail_processor(user_info, label_mapping, mail_body, llm_online=False, api_ke
     You are an expert email categorizing AI model that can understand and think about the user intentions behind an email and label things accordingly
 
     Given the following user
-    
+    ```
     {}
-    
+    ```
 
     According to the label specifications below
-    
+    ```
     {}
-    
+    ```
 
     For the email content
-    
+    ```
     {}
-    
+    ```
 
     Classify the email content into a json format
     {{
@@ -81,7 +81,7 @@ def mail_processor(user_info, label_mapping, mail_body, llm_online=False, api_ke
 
     return label, reason
 
-if _name_ == "_main_":
+if __name__ == "__main__":
 
     from dotenv import load_dotenv
 
