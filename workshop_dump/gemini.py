@@ -35,7 +35,7 @@ For the email content
 ```
 Hello, dnivog.
 
-You are welcome to register and compete in Codeforces Round 913 (Div. 3). It starts on Tuesday, December, 5, 2023 14:35 (UTC). The contest duration is 2 hours 15 minutes. The allowed programming languages are C/C++, Pascal, Java, C#, Python, Ruby, Perl, PHP, Haskell, Scala, OCaml, Go, D, JavaScript, Rust and Kotlin.
+You are welcome to register and compete in Codeforces Round 913 (Div. 3). It starts on Tuesday, June, 5, 2024 14:35 (UTC). The contest duration is 2 hours 15 minutes. The allowed programming languages are C/C++, Pascal, Java, C#, Python, Ruby, Perl, PHP, Haskell, Scala, OCaml, Go, D, JavaScript, Rust and Kotlin.
 
 Div. 3 rounds are designed especially for participants with a rating below 1600. We invite you to participate in the competition!
 
