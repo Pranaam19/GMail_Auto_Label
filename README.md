@@ -1,8 +1,8 @@
 ﻿# GMail_Auto_Label
 
- This repositry consists the backend codebase of our Gmail auto label app.
+ This repositry consists the Backend codebase of our Gmail auto label app.
 
- ## The Exported local app can be accessed from this repositry
+ ## The Exported local app can be accessed from this repositry.(To access the App you should go here
  
 ```
 https://github.com/Pranaam19/GMail_Auto_Label/edit/main/README.md](https://github.com/Pranaam19/Gmail_AutoLabel_App
