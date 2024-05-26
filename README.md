@@ -23,7 +23,7 @@ You can set this up manually or just contact us and we will give your our creden
 
 1. Clone the repository:
    ```
-   
+   https://github.com/Pranaam19/GMail_Auto_Label.git
    ```
 2. Install the required packages:
    ```
