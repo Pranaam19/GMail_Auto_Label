@@ -4,6 +4,10 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
+import os
+
+# Allow OAuth over HTTP for local development
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 # Path to store the token and credentials files
 TOKEN_PATH = os.path.join(os.path.dirname(__file__), 'token.json')
