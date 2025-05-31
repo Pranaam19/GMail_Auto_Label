@@ -16,19 +16,6 @@ from bs4 import BeautifulSoup
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
 
-def get_body(parts):
-    data = ""
-    if 'parts' in parts:
-        for part in parts['parts']:
-            # if 'data' in part['body']:
-            #     data += part['body']['data']
-            data += get_body(part)
-
-        return data
-    else:
-        return parts['body']['data']
-
-
 def get_gmail_service():
     # Check if token file exists
     creds = None
@@ -142,31 +129,68 @@ def fetch_email_content(service, message_id):
             sender = d['value']
 
     # The Body of the message is in Encrypted format. So, we have to decode it.
-    # Get the data and decode it with base 64 decoder.
-    data = get_body(payload.get('parts')[0])
+    # The Body of the message is in Encrypted format. So, we have to decode it.
+    body_content = ""
+    if 'parts' in payload:
+        parts = payload.get('parts', [])
+        # Prioritize text/html, then text/plain
+        html_part = next((p for p in parts if p['mimeType'] == 'text/html'), None)
+        if html_part and 'data' in html_part['body']:
+            data = html_part['body']['data']
+            decoded_data = base64.urlsafe_b64decode(data.encode('UTF-8'))
+            soup = BeautifulSoup(decoded_data, "lxml")
+            body_content = soup.get_text(separator='\n')
 
-    # data = ""
-    # if 'parts' in parts:
-    #     for part in parts['parts']:
-    #         if 'data' in part['body']:
-    #             data += part['body']['data']
-    # else:
-    #     data = parts['body']['data']
+        if not body_content: # Fallback to plain text
+            plain_part = next((p for p in parts if p['mimeType'] == 'text/plain'), None)
+            if plain_part and 'data' in plain_part['body']:
+                data = plain_part['body']['data']
+                decoded_data = base64.urlsafe_b64decode(data.encode('UTF-8'))
+                body_content = decoded_data.decode('utf-8')
 
-    # print(data)
-    data = data.replace("-", "+").replace("_", "/")
-    decoded_data = base64.b64decode(data)
-    # print(decoded_data)
+        if not body_content: # Fallback if complex multipart (e.g. attachments, nested)
+            temp_body_texts = []
+            for part in parts:
+                if 'parts' in part: # Handling nested parts
+                    for sub_part in part.get('parts', []):
+                        if sub_part.get('mimeType') in ['text/plain', 'text/html'] and 'data' in sub_part['body']:
+                            sub_data = sub_part['body']['data']
+                            sub_decoded_data = base64.urlsafe_b64decode(sub_data.encode('UTF-8'))
+                            if sub_part.get('mimeType') == 'text/html':
+                                soup = BeautifulSoup(sub_decoded_data, "lxml")
+                                temp_body_texts.append(soup.get_text(separator='\n'))
+                            else:
+                                temp_body_texts.append(sub_decoded_data.decode('utf-8', errors='ignore'))
+                elif part.get('mimeType') in ['text/plain', 'text/html'] and 'data' in part['body']: # Non-nested part
+                    part_data = part['body']['data']
+                    part_decoded_data = base64.urlsafe_b64decode(part_data.encode('UTF-8'))
+                    if part.get('mimeType') == 'text/html':
+                        soup = BeautifulSoup(part_decoded_data, "lxml")
+                        temp_body_texts.append(soup.get_text(separator='\n'))
+                    else:
+                        temp_body_texts.append(part_decoded_data.decode('utf-8', errors='ignore'))
+            if temp_body_texts:
+                body_content = "\n---\n".join(filter(None, temp_body_texts))
 
-    # Now, the data obtained is in lxml. So, we will parse it with BeautifulSoup library
-    soup = BeautifulSoup(decoded_data, "lxml")
-    body = soup.body()
-    # print(body)
+    elif 'data' in payload.get('body', {}): # Single part message
+        data = payload['body']['data']
+        decoded_data = base64.urlsafe_b64decode(data.encode('UTF-8'))
+        if payload.get('mimeType') == 'text/html':
+            soup = BeautifulSoup(decoded_data, "lxml")
+            body_content = soup.get_text(separator='\n')
+        elif payload.get('mimeType') == 'text/plain':
+            body_content = decoded_data.decode('utf-8')
+        else: # Fallback for single part if mimeType is not text/plain or text/html
+            body_content = decoded_data.decode('utf-8', errors='ignore')
+
+
+    if not body_content: # Final fallback to snippet
+        body_content = message.get('snippet', '')
 
     response = {
         "sender": sender,
         "subject": subject,
-        "body": body
+        "body": body_content
     }
     return response
 

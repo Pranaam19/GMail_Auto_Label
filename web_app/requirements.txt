@@ -1,0 +1,8 @@
+Flask>=2.0
+beautifulsoup4==4.12.2
+google-api-python-client==2.109.0
+google-auth-httplib2==0.1.1
+google-auth-oauthlib==1.1.0
+python-dotenv==1.0.0
+requests==2.31.0
+lxml==4.9.3

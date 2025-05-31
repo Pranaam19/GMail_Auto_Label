@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMail Auto Label</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>{{ message }}</h1>
+    <p>This is the GMail Auto Label web application.</p>
+
+    {% if authenticated %}
+        <p>Status: Authenticated with Gmail.</p>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    {% else %}
+        <p>Status: Not authenticated.</p>
+        <a href="{{ url_for('login') }}">Login with Google</a>
+    {% endif %}
+
+    <hr>
+    <div id="processing-section" style="display: {% if authenticated %}block{% else %}none{% endif %};">
+        <h2>Process Emails</h2>
+        <!-- Changed to a link for simple GET request -->
+        <a href="{{ url_for('process_emails_route') }}" class="button">Start Processing Recent Emails</a>
+            <p><small>(This may take a few moments depending on the number of emails)</small></p>
+        <div id="results-display">
+            <!-- Results will be shown on the results.html page for now -->
+        </div>
+    </div>
+
+</body>
+</html>
