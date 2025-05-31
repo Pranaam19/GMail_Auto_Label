@@ -1,0 +1,7 @@
+# .gitignore content to be appended or created if not exists
+web_app/token.json
+web_app/credentials.json
+*.pyc
+__pycache__/
+.env
+web_app/user_info.json
